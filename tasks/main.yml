@@ -56,16 +56,7 @@
   command: gpg2 --import {{ aptly_gpg_key_dir }}/key.sec
   ignore_errors: yes
 
-# end key creation tasks
-
-# CLI conflict - https://github.com/smira/aptly/issues/234
-- name: start aptly API (will conflict with command line until stopped)
-  command: sh -c "nohup aptly api serve 2>&1 >/dev/null &"
-
-- name: create repositories
-  command: >
-    curl -X POST -H 'Content-Type: application/json' --data '{"name": "{{ item.name }}", "comment": "{{ item.comment }}", "DefaultDistribution": "{{ item.default_distribution }}", "DefaultComponent": "{{ item.default_component }}" }' http://localhost:8080/api/repos
-  with_items: aptly_repositories
-  when: aptly_repositories is defined
-
-- include: test.yml
+# aptly repo create -comment "Packages for MPLS PoC" mpls-poc
+# aptly repo add mpls-poc bird_2.0.2-1ubuntu1_amd64.deb
+# aptly publish repo -distribution trusty mpls-poc
+# nohup aptly serve >/dev/null 2>&1 &
